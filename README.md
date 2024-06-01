@@ -16,3 +16,5 @@ All further processing happened in one of the then unblocked tasks subsequently.
 
 This code could be improved as FreeRTOS does have proper ways of suspending and restarting tasks based on some generated registers, but due to time constraints that was not fully implemented at the time. 
 I do think this was a good solution overall to the problem at hand!
+
+Note: Please see the previous revision of `main.c` to keep comments and other notes in - they were removed to keep the solution looking sleek. 
