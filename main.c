@@ -61,7 +61,6 @@ double _temperature = 10.0;
 double _cooling_rate = 0.99;
 double _absolute_temperature = 1;
 
-
 XSolve_the_tsp hls;
 XSolve_the_tsp_Config *hls_config;
 
@@ -76,7 +75,6 @@ void init_tsp(){
 		if (!hls_config) {
 			xil_printf("Error loading configuration for XSolve_the_tsp_Config \n\r");
 		}
-
 
 		status = XSolve_the_tsp_CfgInitialize(&hls, hls_config);
 		if (status != XST_SUCCESS) {
@@ -136,7 +134,6 @@ void send_solution_data(void *p) {
 		}
 	}
 	vTaskDelete(NULL); //Set up complete so delete ourselves
-
 }
 
 void run_hardware_task(void *p) {
@@ -158,13 +155,9 @@ void run_hardware_task(void *p) {
 			printf(" ===  Hardware run started  === \r\n\n");
 
 			u32 shortest_distance = 9999;
-//			u32 return_value = 0;
 			u32 hw_num_cities = *num_cities;
 
 			XSolve_the_tsp_Set_p_number_of_cities(&hls, hw_num_cities);
-
-//			printf("Waiting for hardware to be ready...\n");
-//			while (!XSolve_the_tsp_IsReady(&hls));
 
 			printf("Starting the hardware...\n");
 
@@ -174,15 +167,14 @@ void run_hardware_task(void *p) {
 			XSolve_the_tsp_Start(&hls);
 			//Wait until it is done
 			while (!XSolve_the_tsp_IsDone(&hls));
-//			vTaskDelay(pdMS_TO_TICKS(10000));
+
 		    Xil_DCacheFlush();
 
 			// store the solution
 			shortest_distance = XSolve_the_tsp_Get_p_shortest_calculated_distance(&hls);
-//			return_value = XSolve_the_tsp_Get_return(&hls);
 
 			printf("               Distance in parameter value: %d\n", (int)shortest_distance);
-//			printf("               Distance in return value: %d\n", (int)return_value);
+
 			// print out the optimal route from the first 20 ints of mainmemory
 			printf("               Optimal route: ");
 			for (int i = 0; i < hw_num_cities+1; i++) {
@@ -219,15 +211,13 @@ void get_scenario_and_city_size(void *p) {
 
 			*request_data_counter += 1;
 			*get_input_counter = 0;
-
 		}
 	}
 	vTaskDelete(NULL);
 }
 
 
-int main()
-{
+int main() {
 	IP4_ADDR(&ip, 192, 168, 10, 1);
 	_distance = 0;
 	_scenario_id = 0;
@@ -271,10 +261,6 @@ void send_request_data(void *p) {
 
 			request_msg[0] = 0x01;
 			request_msg[1] = (char) *num_cities;
-			// request_msg[2] = 0x00;
-			// request_msg[3] = 0x00;
-			// request_msg[4] = 0x00;
-			// request_msg[5] = (char) *scenario_id;
 			request_msg[2] = (char) ((*scenario_id >> 24) & 0xFF);
 			request_msg[3] = (char) ((*scenario_id >> 16) & 0xFF);
 			request_msg[4] = (char) ((*scenario_id >> 8) & 0xFF);
@@ -286,7 +272,7 @@ void send_request_data(void *p) {
 			udp_sendto(send_pcb, pbuf, &ip, PORT);
 
 			pbuf_free(pbuf);
-//			*request_data_counter -= 1;
+
 			*request_data_counter = 0;
 		}
 	}
@@ -330,11 +316,6 @@ void udp_get_handler(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_ad
 			memcpy(msg, p->payload, 7);
 			printf("Request Response Message Type: %d\n", msg[0]);
 
-			// print out all of message in hex
-//			for (int i = 0; i < p->len; i++) {
-//				printf("%02X ", ((unsigned char*) p->payload)[i]);
-//			}
-
 			printf("\nYour solution is of type: %d\n", msg[6]);
 			printf("(1 = Correct, 2 = Incorrect, 3 = Unknown)\r\n\n");
 
@@ -345,7 +326,6 @@ void udp_get_handler(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_ad
 				printf("| Your solution is correct! |\n");
 				printf("_____________________________\n\n");
 
-				// printf some crazy ascii art
 				printf("                        .                      .             +        .     \n");
 				printf("     .    __ _o|                        .                                   \n");
 				printf("         |  /__|===--        .                                       <=>    \n");
