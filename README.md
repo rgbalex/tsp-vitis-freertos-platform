@@ -18,3 +18,4 @@ This code could be improved as FreeRTOS does have proper ways of suspending and 
 I do think this was a good solution overall to the problem at hand!
 
 Note: Please see the previous revision of `main.c` to keep comments and other notes in - they were removed to keep the solution looking sleek. 
+Note: The code found in `network.c` was adapted from a solution graciously provided by Dr Ian Gray - you can find his website here https://iangray.me.uk/index.html
